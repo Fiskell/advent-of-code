@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const _ = require('lodash');
 
 const solution_part1 = (input) => {
   const rows = input.split('\n');

@@ -23,6 +23,7 @@ const steps = {
   RIGHT: (row, col) => [row, col + 1],
 };
 const OBSTACLE = '#';
+const PATHS_EMPTY = '_';
 
 const stepForward = (map, row, col, direction) => {
   const [newRow, newCol] = steps[direction](row, col);
@@ -75,7 +76,7 @@ const solution_part1 = (input) => {
   // make a blank map that is the same width and height as the input
   let paths = Array(rows.length)
     .fill()
-    .map(() => Array(rows[0].length).fill('_'));
+    .map(() => Array(rows[0].length).fill(PATHS_EMPTY));
   paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
   pathIndexes = [];
 
@@ -87,13 +88,13 @@ const solution_part1 = (input) => {
 
     if (map[newRow][newCol] === OBSTACLE) {
       direction = guardTurn(direction);
-      paths[newRow][newCol] = '#';
+      paths[newRow][newCol] = OBSTACLE;
       continue;
     }
 
     guardRow = newRow;
     guardCol = newCol;
-    if (paths[guardRow][guardCol] === '_') {
+    if (paths[guardRow][guardCol] === PATHS_EMPTY) {
       pathIndexes.push([guardRow, guardCol]);
       paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
       ret++;
@@ -133,7 +134,7 @@ const solution_part2 = (input) => {
   // make a blank map that is the same width and height as the input
   let paths = Array(rows.length)
     .fill()
-    .map(() => Array(rows[0].length).fill('_'));
+    .map(() => Array(rows[0].length).fill(PATHS_EMPTY));
   paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
 
   let obstruction_cnt = 0;
@@ -166,7 +167,7 @@ const solution_part2 = (input) => {
 
       guardRow = newRow;
       guardCol = newCol;
-      if (paths[guardRow][guardCol] === '_') {
+      if (paths[guardRow][guardCol] === PATHS_EMPTY) {
         paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
       }
     }

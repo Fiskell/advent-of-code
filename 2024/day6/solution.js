@@ -129,13 +129,6 @@ const solution_part2 = (input) => {
     }
     map.push(parts);
   });
-  console.log('Guard at: ', guardRow, guardCol);
-
-  // make a blank map that is the same width and height as the input
-  // let paths = Array(rows.length)
-  //   .fill()
-  //   .map(() => Array(rows[0].length).fill(PATHS_EMPTY));
-  // paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
 
   let obstruction_cnt = 0;
   let ct = 0;
@@ -145,7 +138,6 @@ const solution_part2 = (input) => {
     const mapWithObstructions = _.cloneDeep(map);
     mapWithObstructions[i][j] = OBSTACLE;
     while (true) {
-      // ct++;
       const [newRow, newCol] = stepForward(mapWithObstructions, guardRow, guardCol, direction);
       if (newRow === null) {
         break;
@@ -163,22 +155,17 @@ const solution_part2 = (input) => {
         }
         obstructions[key].push(direction);
         direction = guardTurn(direction);
-        // paths[newRow][newCol] = OBSTACLE;
         continue;
       }
 
       guardRow = newRow;
       guardCol = newCol;
-      // if (paths[guardRow][guardCol] === PATHS_EMPTY) {
-      //   paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
-      // }
     }
     //reset guard position
     guardRow = ogGuardRow;
     guardCol = ogGuardCol;
     direction = DIR.UP;
   });
-  // console.log(ct);
 
   return obstruction_cnt;
 };

@@ -71,14 +71,13 @@ const solution_part1 = (input) => {
     }
     map.push(parts);
   });
-  console.log('Guard at: ', guardRow, guardCol);
-  printMatrix(map);
 
   // make a blank map that is the same width and height as the input
   let paths = Array(rows.length)
     .fill()
     .map(() => Array(rows[0].length).fill('_'));
   paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
+  pathIndexes = [];
 
   while (true) {
     const [newRow, newCol] = stepForward(map, guardRow, guardCol, direction);
@@ -95,25 +94,25 @@ const solution_part1 = (input) => {
     guardRow = newRow;
     guardCol = newCol;
     if (paths[guardRow][guardCol] === '_') {
+      pathIndexes.push([guardRow, guardCol]);
       paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
       ret++;
     }
   }
 
-  printMatrix(paths);
-
-  return ret;
+  return [ret, pathIndexes];
 };
 
 const solution_part2 = (input) => {
   const rows = input.split('\n');
   let map = [];
-  let ret = 1;
   let ogGuardRow = null;
   let ogGuardCol = null;
   let guardRow = null;
   let guardCol = null;
   let direction = DIR.UP;
+
+  const [ret, pathIndexes] = solution_part1(input);
 
   rows.forEach((row, i) => {
     const parts = row.split('');
@@ -130,7 +129,6 @@ const solution_part2 = (input) => {
     map.push(parts);
   });
   console.log('Guard at: ', guardRow, guardCol);
-  // printMatrix(map);
 
   // make a blank map that is the same width and height as the input
   let paths = Array(rows.length)
@@ -140,48 +138,42 @@ const solution_part2 = (input) => {
 
   let obstruction_cnt = 0;
 
-  map.forEach((row, i) => {
-    row.forEach((cell, j) => {
-      const obstructions = {};
-      const mapWithObstructions = _.cloneDeep(map);
-      if (cell !== '.') {
-        return;
+  pathIndexes.forEach(([i, j]) => {
+    const obstructions = {};
+    const mapWithObstructions = _.cloneDeep(map);
+    mapWithObstructions[i][j] = OBSTACLE;
+    while (true) {
+      const [newRow, newCol] = stepForward(mapWithObstructions, guardRow, guardCol, direction);
+      if (newRow === null) {
+        break;
       }
-      mapWithObstructions[i][j] = OBSTACLE;
-      while (true) {
-        const [newRow, newCol] = stepForward(mapWithObstructions, guardRow, guardCol, direction);
-        if (newRow === null) {
+
+      if (mapWithObstructions[newRow][newCol] === OBSTACLE) {
+        // Been here before
+        const key = `${newRow}-${newCol}`;
+        if (obstructions[key]?.includes(direction)) {
+          obstruction_cnt++;
           break;
         }
-
-        if (mapWithObstructions[newRow][newCol] === OBSTACLE) {
-          const key = `${newRow}-${newCol}`;
-          // Been here before
-          if (obstructions[key]?.includes(direction)) {
-            obstruction_cnt++;
-            break;
-          }
-          if (!obstructions[key]) {
-            obstructions[key] = [];
-          }
-          obstructions[key].push(direction);
-          direction = guardTurn(direction);
-          paths[newRow][newCol] = '#';
-          continue;
+        if (!obstructions[key]) {
+          obstructions[key] = [];
         }
-
-        guardRow = newRow;
-        guardCol = newCol;
-        if (paths[guardRow][guardCol] === '_') {
-          paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
-          ret++;
-        }
+        obstructions[key].push(direction);
+        direction = guardTurn(direction);
+        paths[newRow][newCol] = OBSTACLE;
+        continue;
       }
-      //reset guard position
-      guardRow = ogGuardRow;
-      guardCol = ogGuardCol;
-      direction = DIR.UP;
-    });
+
+      guardRow = newRow;
+      guardCol = newCol;
+      if (paths[guardRow][guardCol] === '_') {
+        paths[guardRow][guardCol] = DIR_SYMBOLS[direction];
+      }
+    }
+    //reset guard position
+    guardRow = ogGuardRow;
+    guardCol = ogGuardCol;
+    direction = DIR.UP;
   });
 
   return obstruction_cnt;

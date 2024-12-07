@@ -131,7 +131,6 @@ const solution_part2 = (input) => {
   });
 
   let obstruction_cnt = 0;
-  let ct = 0;
 
   pathIndexes.forEach(([i, j]) => {
     const obstructions = {};

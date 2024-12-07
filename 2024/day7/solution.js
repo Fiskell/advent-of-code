@@ -61,7 +61,7 @@ const solution_part2 = (input) => {
     // get trinary representation of the number of operations
     for (let i = 0; i < Math.pow(3, parts.length - 1); i++) {
       let tot = 0;
-      const binary = i
+      const trinary = i
         .toString(3)
         .padStart(parts.length - 1, '0')
         .split('');
@@ -69,7 +69,7 @@ const solution_part2 = (input) => {
       for (let j = 0; j < parts.length; j++) {
         eq.push(parts[j]);
         if (j < parts.length - 1) {
-          eq.push(operations[parseInt(binary[j])]);
+          eq.push(operations[parseInt(trinary[j])]);
         }
       }
 

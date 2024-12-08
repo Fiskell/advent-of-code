@@ -89,4 +89,6 @@ const solution_part2 = (input) => {
 
 // const input2 = fs.readFileSync(path.resolve(__dirname, 'sample2.txt'), 'utf8');
 const input2 = fs.readFileSync(path.resolve(__dirname, 'input.txt'), 'utf8');
+console.time('part2');
 console.log('Part 2 Answer: ', solution_part2(input2));
+console.timeEnd('part2');

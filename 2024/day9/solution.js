@@ -2,17 +2,24 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 
+const FREE = '.';
+const TAKEN = '#';
+
+const expand = (val, numTimes) => {
+  return Array(parseInt(numTimes)).fill(val);
+};
+
 const shiftMemory = (memory) => {
   let right = memory.length - 1;
   for (let left = 0; left < memory.length; left++) {
     if (left > right) {
       break;
     }
-    if (memory[left] === '.') {
+    if (memory[left] === FREE) {
       while (true) {
-        if (memory[right] !== '.') {
+        if (memory[right] !== FREE) {
           memory[left] = memory[right];
-          memory[right] = '.';
+          memory[right] = FREE;
           break;
         }
         right--;
@@ -28,30 +35,22 @@ const shiftMemory = (memory) => {
 };
 
 const sum = (memory) => {
-  let ret = 0;
-  for (let i = 0; i < memory.length; i++) {
-    if (memory[i] !== '.') {
-      ret += parseInt(memory[i]) * i;
-    }
-  }
-  return ret;
+  return memory.reduce((ret, val, i) => (val !== FREE ? ret + parseInt(val) * i : ret), 0);
 };
 
 const solution_part1 = (input) => {
   const parts = input.split('');
-  let ret = 0;
   let out = [];
   let id = 0;
   for (let i = 0; i < parts.length; i++) {
     const isFile = i % 2 === 0;
-    const isFreeSpace = i % 2 === 1;
     const val = parts[i];
 
     if (isFile) {
-      out = [...out, ...Array(parseInt(val)).fill(id)];
+      out = [...out, ...expand(id, val)];
       id++;
     } else {
-      out = [...out, ...Array(parseInt(val)).fill('.')];
+      out = [...out, ...expand(FREE, val)];
     }
   }
 
@@ -60,39 +59,44 @@ const solution_part1 = (input) => {
   return sum(out);
 };
 
-const rebalanceMemory = (files, memory, freeSpace) => {
+const defrag = (files, memory, freeSpace) => {
   for (let f = files.length - 1; f >= 0; f--) {
     const file = files[f];
+
+    // Skip if already moved
     if (file.moved) {
       continue;
     }
+
     const size = parseInt(file.size);
+
     //find index of first string of '.' that is the same size as the file
-    const index = freeSpace.indexOf(Array(size).fill('.').join(''));
+    const index = freeSpace.indexOf(expand(FREE, size).join(''));
+
+    // No free space can fit the file
     if (index === -1) {
       continue;
     }
 
+    // Don't move if it's in a good position already
     if (index > file.index) {
       continue;
     }
 
-    // set new memory
-    memory.splice(index, size, ...Array(size).fill(file.id));
+    // Set new memory
+    memory.splice(index, size, ...expand(file.id, size));
+    // Add free space
+    freeSpace = freeSpace.slice(0, file.index) + expand(FREE, size).join('') + freeSpace.slice(file.index + size);
+    // Unset old memory
+    memory.splice(file.index, file.size, ...expand(FREE, file.size));
+    // Remove free space
+    freeSpace = freeSpace.slice(0, index) + expand(TAKEN, size).join('') + freeSpace.slice(index + size);
 
-    // add free space
-    freeSpace = freeSpace.slice(0, file.index) + Array(size).fill('.').join('') + freeSpace.slice(file.index + size);
-
-    // unset old memory
-    memory.splice(file.index, file.size, ...Array(parseInt(file.size)).fill('.'));
-
+    // Update file
     files[f].index = index;
-
-    // remove free space
-    freeSpace = freeSpace.slice(0, index) + Array(size).fill('#').join('') + freeSpace.slice(index + size);
     files[f].moved = true;
   }
-  return [files, memory];
+  return memory;
 };
 
 const solution_part2 = (input) => {
@@ -101,10 +105,8 @@ const solution_part2 = (input) => {
   let files = [];
   let memory = [];
   let freeSpace = [];
-  for (let i = 0; i < parts.length; i++) {
+  parts.forEach((val, i) => {
     const isFile = i % 2 === 0;
-    const val = parts[i];
-
     if (isFile) {
       files.push({
         id,
@@ -112,15 +114,15 @@ const solution_part2 = (input) => {
         size: val,
         moved: false,
       });
-      memory = memory.concat(Array(parseInt(val)).fill(id));
-      freeSpace = freeSpace.concat(Array(parseInt(val)).fill('#'));
+      memory = memory.concat(expand(id, val));
+      freeSpace = freeSpace.concat(expand(TAKEN, val));
       id++;
     } else {
-      memory = memory.concat(Array(parseInt(val)).fill('.'));
-      freeSpace = freeSpace.concat(Array(parseInt(val)).fill('.'));
+      memory = memory.concat(expand(FREE, val));
+      freeSpace = freeSpace.concat(expand(FREE, val));
     }
-  }
-  const [newFiles, newMemory] = rebalanceMemory(files, memory, freeSpace.join(''));
+  });
+  const newMemory = defrag(files, memory, freeSpace.join(''));
   return sum(newMemory);
 };
 

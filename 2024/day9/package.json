@@ -1,0 +1,16 @@
+{
+  "name": "advent-of-code-2024-day8",
+  "version": "1.0.0",
+  "description": "Advent of Code 2024 - Day 8 Solution",
+  "main": "solution.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "prettier": "^3.4.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

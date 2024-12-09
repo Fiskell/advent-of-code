@@ -57,8 +57,6 @@ const solution_part1 = (input) => {
     } else {
       out = [...out, ...Array(parseInt(val)).fill('.')];
     }
-    // console.log(out);
-    // console.log('out:', out.join(''));
   }
 
   out = shiftMemory(out);
@@ -66,15 +64,8 @@ const solution_part1 = (input) => {
   return sum(out);
 };
 
-const printMemory = (memory) => {
-  const out = memory.map((m) => m.val.join('')).join('');
-  console.log(out);
-};
-
 const rebalanceMemory = (files, memory, freeSpace) => {
   for (let f = files.length - 1; f >= 0; f--) {
-    console.log('file: ', files[f]);
-    // console.log('\n Mem: ', memory, freeSpace);
     const file = files[f];
     if (file.moved) {
       continue;
@@ -82,7 +73,6 @@ const rebalanceMemory = (files, memory, freeSpace) => {
     const size = parseInt(file.size);
     //find index of first string of '.' that is the same size as the file
     const index = freeSpace.indexOf(Array(size).fill('.').join(''));
-    // console.log('Index: ', index);
     if (index === -1) {
       continue;
     }
@@ -90,8 +80,6 @@ const rebalanceMemory = (files, memory, freeSpace) => {
     if (index > file.index) {
       continue;
     }
-
-    // console.log(file.size, file);
 
     // set new memory
     memory.splice(index, size, ...Array(size).fill(file.id));

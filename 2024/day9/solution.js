@@ -5,11 +5,9 @@ const _ = require('lodash');
 const shiftMemory = (memory) => {
   let right = memory.length - 1;
   for (let left = 0; left < memory.length; left++) {
-    // console.log(left, right);
     if (left > right) {
       break;
     }
-    // console.log(memory.join(''));
     if (memory[left] === '.') {
       while (true) {
         if (memory[right] !== '.') {
@@ -25,8 +23,6 @@ const shiftMemory = (memory) => {
       continue;
     }
   }
-
-  // console.log('Memory: \n', memory);
 
   return memory;
 };
@@ -125,7 +121,6 @@ const solution_part2 = (input) => {
     }
   }
   const [newFiles, newMemory] = rebalanceMemory(files, memory, freeSpace.join(''));
-  console.log(newFiles, newMemory);
   return sum(newMemory);
 };
 

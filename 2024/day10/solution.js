@@ -27,30 +27,22 @@ const travel = (matrix, newIndex, i, j, count, hasSeen) => {
 
   // Up
   if (i - 1 >= 0 && matrix[i - 1][j] === newIndex) {
-    let upRet = travel(matrix, newIndex + 1, i - 1, j, count, hasSeen);
-    up = upRet[0];
-    hasSeen = upRet[1];
+    [up, hasSeen] = travel(matrix, newIndex + 1, i - 1, j, count, hasSeen);
   }
 
   // Down
   if (i + 1 < matrix.length && matrix[i + 1][j] === newIndex) {
-    let downRet = travel(matrix, newIndex + 1, i + 1, j, count, hasSeen);
-    down = downRet[0];
-    hasSeen = downRet[1];
+    [down, hasSeen] = travel(matrix, newIndex + 1, i + 1, j, count, hasSeen);
   }
 
   // Left
   if (j - 1 >= 0 && matrix[i][j - 1] === newIndex) {
-    let leftRet = travel(matrix, newIndex + 1, i, j - 1, count, hasSeen);
-    left = leftRet[0];
-    hasSeen = leftRet[1];
+    [left, hasSeen] = travel(matrix, newIndex + 1, i, j - 1, count, hasSeen);
   }
 
   // Right
   if (j + 1 < matrix[0].length && matrix[i][j + 1] === newIndex) {
-    let rightRet = travel(matrix, newIndex + 1, i, j + 1, count, hasSeen);
-    right = rightRet[0];
-    hasSeen = rightRet[1];
+    [right, hasSeen] = travel(matrix, newIndex + 1, i, j + 1, count, hasSeen);
   }
 
   return [up + down + left + right, hasSeen];
@@ -75,10 +67,7 @@ const solution_part1 = (input, useHasSeen) => {
   trailHeads.forEach((trailHead) => {
     const [numTrails, seen] = travel(matrix, 1, trailHead[0], trailHead[1], 0, useHasSeen ? [] : null);
     totalTrails.push(numTrails);
-    // console.log('Num Trails: ', numTrails);
   });
-
-  // console.log('Total Trails: ', totalTrails);
 
   return totalTrails.reduce((acc, curr) => acc + curr, 0);
 };

@@ -26,10 +26,10 @@ const solution_part1 = (input, useHasSeen) => {
 };
 
 const solution_part2 = (input) => {
-  let nums = input.split(' ').map((num) => parseInt(num));
+  let nums = input.split(' ').map((num) => BigInt(num));
   let cache = new Map(); // cache[number][blink] = count
-  let MAX_BLINKS = 75;
-  let totalCount = 0;
+  let MAX_BLINKS = 4445;
+  let totalCount = BigInt(0);
 
   const getCountAfterBlinks = (num, blinks) => {
     const key = `${num},${blinks}`;
@@ -38,21 +38,22 @@ const solution_part2 = (input) => {
     }
 
     if (blinks === 0) {
-      return 1;
+      return BigInt(1);
     }
 
-    let newCount = 0;
+    let newCount = BigInt(0);
     let num_str = num.toString();
 
     if (num_str === '0') {
-      newCount = getCountAfterBlinks(1, blinks - 1);
+      newCount = getCountAfterBlinks(BigInt(1), blinks - 1);
     } else if (num_str.length % 2 === 0) {
       let half = num_str.length / 2;
       let firstHalf = num_str.substring(0, half);
-      let secondHalf = parseInt(num_str.substring(half));
-      newCount = getCountAfterBlinks(parseInt(firstHalf), blinks - 1) + getCountAfterBlinks(secondHalf, blinks - 1);
+      let secondHalf = num_str.substring(half);
+      newCount =
+        getCountAfterBlinks(BigInt(firstHalf), blinks - 1) + getCountAfterBlinks(BigInt(secondHalf), blinks - 1);
     } else {
-      newCount = getCountAfterBlinks(parseInt(num) * 2024, blinks - 1);
+      newCount = getCountAfterBlinks(num * BigInt(2024), blinks - 1);
     }
 
     cache.set(key, newCount);
@@ -64,7 +65,7 @@ const solution_part2 = (input) => {
     totalCount += getCountAfterBlinks(num, MAX_BLINKS);
   });
 
-  return totalCount;
+  return totalCount.toString(); // Convert back to string for display
 };
 
 // const input = fs.readFileSync(path.resolve(__dirname, 'sample.txt'), 'utf8');

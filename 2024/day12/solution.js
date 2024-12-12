@@ -28,49 +28,39 @@ const findArea = (matrix, mask, char, row, col) => {
 };
 
 const getFenceAmounts = (matrix, _mask, char, row, col) => {
-  console.log(matrix);
   let ret = 0;
   let [areaPts, mask] = findArea(matrix, _mask, char, row, col);
-  console.log(char, row, col, areaPts);
   areaPts.forEach((pts) => {
     // Top
     if (pts[0] - 1 < 0) {
-      console.log(char, pts[0], pts[1], `top`);
       ret++;
     }
     // Bottom
     if (pts[0] + 1 >= matrix.length) {
-      console.log(char, pts[0], pts[1], `bottom`);
       ret++;
     }
     // Max Left
     if (pts[1] - 1 < 0) {
-      console.log(char, pts[0], pts[1], `max left`);
       ret++;
     }
     // Max Right
     if (pts[1] + 1 >= matrix[0].length) {
-      console.log(char, pts[0], pts[1], `max right`);
       ret++;
     }
     // Above
     if (pts[0] - 1 >= 0 && matrix[pts[0] - 1][pts[1]] !== char) {
-      console.log(char, pts[0], pts[1], `above`);
       ret++;
     }
     // Below
     if (pts[0] + 1 < matrix.length && matrix[pts[0] + 1][pts[1]] !== char) {
-      console.log(char, pts[0], pts[1], `below`);
       ret++;
     }
     // Left
     if (pts[1] - 1 >= 0 && matrix[pts[0]][pts[1] - 1] !== char) {
-      console.log(char, pts[0], pts[1], `left`);
       ret++;
     }
     // Right
     if (pts[1] + 1 < matrix[0].length && matrix[pts[0]][pts[1] + 1] !== char) {
-      console.log(char, pts[0], pts[1], `right`, matrix[pts[0]][pts[1] + 1]);
       ret++;
     }
   });
@@ -94,7 +84,6 @@ const solution_part1 = (input, useHasSeen) => {
     cols.forEach((col, colIndex) => {
       if (mask[index][colIndex] === '.') {
         [fenceNeeded, area, mask] = getFenceAmounts(matrix, mask, col, index, colIndex);
-        console.log(col, index, colIndex, `fence: `, fenceNeeded, mask);
         total += fenceNeeded * area;
       }
     });
@@ -200,7 +189,7 @@ const solution_part2 = (input) => {
     cols.forEach((col, colIndex) => {
       if (mask[index][colIndex] === '.') {
         [sides, area, mask] = getFenceSidesAndArea(matrix, mask, col, index, colIndex);
-        console.log('----', col, `fence: `, sides, sides.size, area);
+        // console.log('----', col, `fence: `, sides, sides.size, area);
         total += sides.size * area;
       }
     });
